@@ -2,7 +2,7 @@ module github.com/toutmost/admin-common
 
 go 1.22.0
 
-replace github.com/zeromicro/go-zero v1.6.3 => github.com/toutmost/admin-tools v1.7.1
+replace github.com/zeromicro/go-zero v1.6.3 => github.com/toutmost/admin-tools v1.6.9
 
 replace github.com/mojocn/base64Captcha v1.3.6 => github.com/suyuan32/base64Captcha v1.3.7
 
