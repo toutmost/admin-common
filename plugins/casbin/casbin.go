@@ -29,6 +29,7 @@ import (
 )
 
 // CasbinConf is the configuration structure for Casbin
+// CasbinConf 是 Casbin 的配置结构
 type CasbinConf struct {
 	ModelText string `json:"ModelText,optional,env=CASBIN_MODEL_TEXT"`
 }
@@ -85,7 +86,9 @@ func (l CasbinConf) MustNewCasbin(dbType, dsn string) *casbin.Enforcer {
 }
 
 // MustNewRedisWatcher returns redis watcher. If there are errors, it will exist.
+// MustNewRedisWatcher 返回 redis 观察器。如果有错误，它将存在。
 // f function will be called if the policies are updated.
+// 如果更新了策略，将调用 f 函数。
 func (l CasbinConf) MustNewRedisWatcher(c redis.RedisConf, f func(string2 string)) persist.Watcher {
 	w, err := rediswatcher.NewWatcher(c.Host, rediswatcher.WatcherOptions{
 		Options: redis2.Options{
@@ -104,6 +107,7 @@ func (l CasbinConf) MustNewRedisWatcher(c redis.RedisConf, f func(string2 string
 }
 
 // MustNewCasbinWithRedisWatcher returns Casbin Enforcer with Redis watcher.
+// MustNewCasbinWithRedisWatcher 返回带有 Redis 监视器的 Casbin Enforcer。
 func (l CasbinConf) MustNewCasbinWithRedisWatcher(dbType, dsn string, c redis.RedisConf) *casbin.Enforcer {
 	cbn := l.MustNewCasbin(dbType, dsn)
 	w := l.MustNewRedisWatcher(c, func(data string) {
@@ -117,7 +121,9 @@ func (l CasbinConf) MustNewCasbinWithRedisWatcher(dbType, dsn string, c redis.Re
 }
 
 // MustNewOriginalRedisWatcher returns redis watcher which uses original go redis. If there are errors, it will exist.
+// MustNewOriginalRedisWatcher 返回使用原始 go redis 的 redis 观察器。如果有错误，它将存在。
 // f function will be called if the policies are updated.
+// 如果更新了策略，将调用 f 函数。
 func (l CasbinConf) MustNewOriginalRedisWatcher(c config.RedisConf, f func(string2 string)) persist.Watcher {
 	w, err := rediswatcher.NewWatcher(c.Host, rediswatcher.WatcherOptions{
 		Options: redis2.Options{
@@ -137,6 +143,7 @@ func (l CasbinConf) MustNewOriginalRedisWatcher(c config.RedisConf, f func(strin
 }
 
 // MustNewCasbinWithOriginalRedisWatcher returns Casbin Enforcer with original Redis watcher.
+// MustNewCasbinWithOriginalRedisWatcher 返回带有原始 Redis 监视器的 Casbin Enforcer。
 func (l CasbinConf) MustNewCasbinWithOriginalRedisWatcher(dbType, dsn string, c config.RedisConf) *casbin.Enforcer {
 	cbn := l.MustNewCasbin(dbType, dsn)
 	w := l.MustNewOriginalRedisWatcher(c, func(data string) {

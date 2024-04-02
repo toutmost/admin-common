@@ -25,25 +25,28 @@ import (
 )
 
 // Conf is the configuration structure for GORM.
+// Conf 是 GORM 的配置结构。
 type Conf struct {
-	Type        string `json:",default=mysql,options=[mysql,postgres]"` // type of database: mysql, postgres
+	Type        string `json:",default=mysql,options=[mysql,postgres]"` // type of database: mysql, postgres 数据库类型：mysql、postgres
 	Host        string `json:",default=localhost"`                      // address
 	Port        int    `json:",default=3306"`                           // port
 	Config      string `json:",optional"`                               // extra config such as charset=utf8mb4&parseTime=True
 	DBName      string `json:",default=simple_admin"`                   // database name
 	Username    string `json:",default=root"`                           // username
 	Password    string `json:",optional"`                               // password
-	MaxIdleConn int    `json:",default=10"`                             // the maximum number of connections in the idle connection pool
-	MaxOpenConn int    `json:",default=100"`                            // the maximum number of open connections to the database
-	LogMode     string `json:",default=error"`                          // open gorm's global logger
+	MaxIdleConn int    `json:",default=10"`                             // the maximum number of connections in the idle connection pool 空闲连接池中的最大连接数
+	MaxOpenConn int    `json:",default=100"`                            // the maximum number of open connections to the database 数据库的最大打开连接数
+	LogMode     string `json:",default=error"`                          // open gorm's global logger 打开 gorm 的全局日志记录器
 }
 
 // MysqlDSN returns the MySQL DSN link from the configuration.
+// MysqlDSN 返回配置中的 MySQL DSN 链接。
 func (g Conf) MysqlDSN() string {
 	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?%s", g.Username, g.Password, g.Host, g.Port, g.DBName, g.Config)
 }
 
 // PostgreSqlDSN returns the PostgreSQL DSN link from the configuration.
+// PostgreSqlDSN 返回配置中的 PostgreSQL DSN 链接。
 func (g Conf) PostgreSqlDSN() string {
 	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d %s", g.Host, g.Username, g.Password,
 		g.DBName, g.Port, g.Config)
@@ -63,11 +66,11 @@ func (g Conf) NewGORM() (*gorm.DB, error) {
 func MysqlClient(c Conf) (*gorm.DB, error) {
 	mysqlConfig := mysql.Config{
 		DSN:                       c.MysqlDSN(),
-		DefaultStringSize:         256,   // default size for string fields
-		DisableDatetimePrecision:  true,  // disable datetime precision, which not supported before MySQL 5.6
-		DontSupportRenameIndex:    true,  // drop & create when rename index, rename index not supported before MySQL 5.7, MariaDB
-		DontSupportRenameColumn:   true,  // `change` when rename column, rename column not supported before MySQL 8, MariaDB
-		SkipInitializeWithVersion: false, // autoconfiguration based on currently MySQL version
+		DefaultStringSize:         256,   // default size for string fields 字符串字段的默认大小
+		DisableDatetimePrecision:  true,  // disable datetime precision, which not supported before MySQL 5.6 禁用日期时间精度，MySQL 5.6 之前不支持该功能
+		DontSupportRenameIndex:    true,  // drop & create when rename index, rename index not supported before MySQL 5.7, MariaDB 重命名索引时丢弃并创建索引，MySQL 5.7 之前不支持重命名索引，MariaDB
+		DontSupportRenameColumn:   true,  // `change` when rename column, rename column not supported before MySQL 8, MariaDB 重命名列时使用 "change"，MySQL 8 之前不支持重命名列，MariaDB
+		SkipInitializeWithVersion: false, // autoconfiguration based on currently MySQL version 基于当前 MySQL 版本的自动配置
 	}
 
 	if db, err := gorm.Open(mysql.New(mysqlConfig), &gorm.Config{

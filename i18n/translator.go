@@ -36,6 +36,7 @@ import (
 var LocaleFS embed.FS
 
 // Translator is a struct storing translating data.
+// 翻译器是一个存储翻译数据的结构。
 type Translator struct {
 	bundle       *i18n.Bundle
 	localizer    map[language.Tag]*i18n.Localizer
@@ -43,6 +44,7 @@ type Translator struct {
 }
 
 // NewBundle returns a bundle from FS.
+// NewBundle 从 FS 返回一个捆绑包。
 func (l *Translator) NewBundle(file embed.FS) {
 	bundle := i18n.NewBundle(language.Chinese)
 	bundle.RegisterUnmarshalFunc("json", json.Unmarshal)
@@ -80,6 +82,7 @@ func (l *Translator) NewTranslator() {
 // Trans used to translate any i18n string.
 func (l *Translator) Trans(ctx context.Context, msgId string) string {
 	message, err := l.MatchLocalizer(ctx.Value("lang").(string)).LocalizeMessage(&i18n.Message{ID: msgId})
+
 	if err != nil {
 		return msgId
 	}
