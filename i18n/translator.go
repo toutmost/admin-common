@@ -95,21 +95,25 @@ func (l *Translator) Trans(ctx context.Context, msgId string) string {
 }
 
 // TransError translates the error message
+// TransError 翻译错误信息
 func (l *Translator) TransError(ctx context.Context, err error) error {
+	// 获取上下文中的语言
 	lang := ctx.Value("lang").(string)
+	// 如果是erp的错误
 	if errcode.IsGrpcError(err) {
+		// 对erp的错误消息进行切割，获取desc 后面的部分
 		message, e := l.MatchLocalizer(lang).LocalizeMessage(&i18n.Message{ID: strings.Split(err.Error(), "desc = ")[1]})
 		if e != nil || message == "" {
 			message = err.Error()
 		}
 		return status.Error(status.Code(err), message)
-	} else if codeErr, ok := err.(*errorx.CodeError); ok {
+	} else if codeErr, ok := err.(*errorx.CodeError); ok { // 如果是errorx.CodeError
 		message, e := l.MatchLocalizer(lang).LocalizeMessage(&i18n.Message{ID: codeErr.Error()})
 		if e != nil || message == "" {
 			message = codeErr.Error()
 		}
 		return errorx.NewCodeError(codeErr.Code, message)
-	} else if apiErr, ok := err.(*errorx.ApiError); ok {
+	} else if apiErr, ok := err.(*errorx.ApiError); ok { // 如果是errorx.ApiError
 		message, e := l.MatchLocalizer(lang).LocalizeMessage(&i18n.Message{ID: apiErr.Error()})
 		if e != nil {
 			message = apiErr.Error()
@@ -121,6 +125,7 @@ func (l *Translator) TransError(ctx context.Context, err error) error {
 }
 
 // MatchLocalizer used to matcher the localizer in map
+// 用于匹配地图中定位器的 MatchLocalizer
 func (l *Translator) MatchLocalizer(lang string) *i18n.Localizer {
 	tags := parse.ParseTags(lang)
 	for _, v := range tags {
